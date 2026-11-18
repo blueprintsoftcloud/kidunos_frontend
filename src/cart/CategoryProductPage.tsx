@@ -192,15 +192,15 @@ const ModernProductCard = React.memo(function ModernProductCard({
           {hasDiscount ? (
             <>
               <span className="text-gray-400 line-through font-normal text-[11px] sm:text-xs">
-                ₹ {originalPrice.toLocaleString("en-IN")}
+                AED {originalPrice.toLocaleString("en-AE")}
               </span>
               <span className="text-gray-950 font-medium">
-                From ₹ {finalPrice.toLocaleString("en-IN")}
+                From AED {finalPrice.toLocaleString("en-AE")}
               </span>
             </>
           ) : (
             <span className="text-gray-950 font-medium">
-              ₹ {originalPrice.toLocaleString("en-IN")}
+              AED {originalPrice.toLocaleString("en-AE")}
             </span>
           )}
         </div>
@@ -577,7 +577,7 @@ const CategoryProductsPage = () => {
                           <div className="flex items-center justify-between text-xs font-medium text-gray-900">
                             <span>Price Range</span>
                             <span className="text-gray-500 font-normal">
-                              ₹{pendingPriceRange?.[0] ?? priceBounds.min} – ₹
+                              AED {pendingPriceRange?.[0] ?? priceBounds.min} – AED
                               {pendingPriceRange?.[1] ?? priceBounds.max}
                             </span>
                           </div>
@@ -742,7 +742,7 @@ const CategoryProductsPage = () => {
             {appliedPriceRange && priceBounds && (
               <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-100 border border-stone-200 px-3 py-1 text-xs text-gray-800">
                 <span>
-                  ₹{appliedPriceRange[0]} – ₹{appliedPriceRange[1]}
+                  AED {appliedPriceRange[0]} – AED {appliedPriceRange[1]}
                 </span>
                 <button
                   type="button"

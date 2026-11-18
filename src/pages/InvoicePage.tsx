@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Printer, Download, ArrowLeft, CheckCircle, Clock, XCircle, Truck, Package, MapPin, User, Hash, RotateCcw, QrCode } from "lucide-react";
 import jsPDF from "jspdf";
 import api from "../utils/api";
+import { formatCurrency } from "../utils/currency";
 import { useAuth } from "../context/AuthContext";
 
 /* ─── Types ─────────────────────────────────────────────────────────────────── */
@@ -65,6 +66,7 @@ interface Order {
   discountAmount: number;
   taxAmount: number;
   finalAmount: number;
+  currency?: string;
   paymentMethod: string;
   paymentStatus: string;
   orderStatus: string;
@@ -77,7 +79,7 @@ interface Order {
 }
 
 /* ─── Helpers ────────────────────────────────────────────────────────────────── */
-const fmt = (n: number) => `₹${n.toFixed(2)}`;
+const fmt = (n: number, currency?: string) => formatCurrency(n, currency);
 
 const statusMeta: Record<string, { label: string; color: string; icon: typeof Clock }> = {
   PROCESSING: { label: "Processing", color: "#d97706", icon: Clock },
@@ -217,12 +219,8 @@ export default function InvoicePage() {
     const MM_PER_PT = 25.4 / 72;
     const COURIER_CHAR_WIDTH_EM = 0.6; // standard PDF Courier metric: exactly 0.6em/char
 
-    // jsPDF's built-in Courier is a standard PDF14 font (WinAnsi-ish encoding only) — it has
-    // no glyph for ₹ (U+20B9). Drawing it corrupts both the glyph and the spacing/kerning of
-    // everything after it on that line (verified — this is exactly what produced the garbled
-    // "¹4500.00" output). The on-screen preview still uses fmt()/₹ via HTML, which renders
-    // Unicode fine; only the PDF-drawing path needs an ASCII-safe currency prefix instead.
-    const fmtPdf = (n: number) => `Rs.${n.toFixed(2)}`;
+    const pdfCurrencyPrefix = "AED ";
+    const fmtPdf = (n: number) => `${pdfCurrencyPrefix}${n.toFixed(2)}`;
 
     const wrapText = (text: string, maxWidthMm: number, sizePt: number): string[] => {
       const charWidthMm = sizePt * COURIER_CHAR_WIDTH_EM * MM_PER_PT;
@@ -457,8 +455,8 @@ export default function InvoicePage() {
                     <p className="text-xs text-gray-500">{formatVariantOptions(item.variant)}</p>
                   )}
                   <div className="flex justify-between text-gray-600 mt-0.5">
-                    <span>{item.quantity} x {fmt(item.price)}</span>
-                    <span className="font-semibold text-gray-900">{fmt(item.price * item.quantity)}</span>
+                    <span>{item.quantity} x {fmt(item.price, order.currency)}</span>
+                    <span className="font-semibold text-gray-900">{fmt(item.price * item.quantity, order.currency)}</span>
                   </div>
                 </div>
               ))}
@@ -468,22 +466,22 @@ export default function InvoicePage() {
 
             {/* Totals */}
             <div className="space-y-2 mb-5">
-              <div className="flex justify-between"><span>Subtotal</span><span>{fmt(order.totalAmount)}</span></div>
+              <div className="flex justify-between"><span>Subtotal</span><span>{fmt(order.totalAmount, order.currency)}</span></div>
               <div className="flex justify-between">
                 <span>Shipping</span>
-                <span>{order.shippingCharge > 0 ? fmt(order.shippingCharge) : "Free"}</span>
+                <span>{order.shippingCharge > 0 ? fmt(order.shippingCharge, order.currency) : "Free"}</span>
               </div>
               {order.discountAmount > 0 && (
                 <div className="flex justify-between">
                   <span>Discount{order.coupon ? ` (${order.coupon.code})` : ""}</span>
-                  <span>-{fmt(order.discountAmount)}</span>
+                  <span>-{fmt(order.discountAmount, order.currency)}</span>
                 </div>
               )}
               {order.taxAmount > 0 && (
-                <div className="flex justify-between"><span>Tax</span><span>{fmt(order.taxAmount)}</span></div>
+                <div className="flex justify-between"><span>Tax</span><span>{fmt(order.taxAmount, order.currency)}</span></div>
               )}
               <div className="flex justify-between font-extrabold text-sm border-t border-gray-900 pt-2 mt-2">
-                <span>TOTAL</span><span>{fmt(order.finalAmount)}</span>
+                <span>TOTAL</span><span>{fmt(order.finalAmount, order.currency)}</span>
               </div>
             </div>
 
@@ -641,8 +639,8 @@ export default function InvoicePage() {
                       </div>
                     </td>
                     <td className="py-3.5 text-center text-gray-600 font-medium tabular-nums">{item.quantity}</td>
-                    <td className="py-3.5 text-right text-gray-600 tabular-nums">{fmt(item.price)}</td>
-                    <td className="py-3.5 pr-2 text-right font-bold text-gray-900 tabular-nums rounded-r-xl">{fmt(item.price * item.quantity)}</td>
+                    <td className="py-3.5 text-right text-gray-600 tabular-nums">{fmt(item.price, order.currency)}</td>
+                    <td className="py-3.5 pr-2 text-right font-bold text-gray-900 tabular-nums rounded-r-xl">{fmt(item.price * item.quantity, order.currency)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -655,11 +653,11 @@ export default function InvoicePage() {
               <div className="space-y-2.5 pb-4">
                 <div className="flex justify-between text-sm text-gray-600">
                   <span>Subtotal</span>
-                  <span className="tabular-nums">{fmt(order.totalAmount)}</span>
+                  <span className="tabular-nums">{fmt(order.totalAmount, order.currency)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-gray-600">
                   <span>Shipping</span>
-                  <span className="tabular-nums">{order.shippingCharge > 0 ? fmt(order.shippingCharge) : <span className="text-green-600 font-semibold">Free</span>}</span>
+                  <span className="tabular-nums">{order.shippingCharge > 0 ? fmt(order.shippingCharge, order.currency) : <span className="text-green-600 font-semibold">Free</span>}</span>
                 </div>
                 {order.discountAmount > 0 && (
                   <div className="flex justify-between text-sm text-green-600 font-medium">
@@ -671,13 +669,13 @@ export default function InvoicePage() {
                         </span>
                       )}
                     </span>
-                    <span className="tabular-nums">−{fmt(order.discountAmount)}</span>
+                    <span className="tabular-nums">−{fmt(order.discountAmount, order.currency)}</span>
                   </div>
                 )}
                 {order.taxAmount > 0 && (
                   <div className="flex justify-between text-sm text-gray-600">
                     <span>Tax</span>
-                    <span className="tabular-nums">{fmt(order.taxAmount)}</span>
+                    <span className="tabular-nums">{fmt(order.taxAmount, order.currency)}</span>
                   </div>
                 )}
               </div>
@@ -685,7 +683,7 @@ export default function InvoicePage() {
               <div className="rounded-2xl bg-gray-50 border border-gray-200 px-5 py-4">
                 <div className="flex justify-between items-baseline">
                   <span className="text-xs font-bold uppercase tracking-widest text-gray-600">Total</span>
-                  <span className="text-2xl font-black text-gray-950 tabular-nums">{fmt(order.finalAmount)}</span>
+                  <span className="text-2xl font-black text-gray-950 tabular-nums">{fmt(order.finalAmount, order.currency)}</span>
                 </div>
               </div>
 
@@ -695,7 +693,7 @@ export default function InvoicePage() {
                     <CheckCircle className="w-3.5 h-3.5" />
                     Amount Paid
                   </span>
-                  <span className="text-sm font-bold text-green-700 tabular-nums">{fmt(order.finalAmount)}</span>
+                  <span className="text-sm font-bold text-green-700 tabular-nums">{fmt(order.finalAmount, order.currency)}</span>
                 </div>
               )}
             </div>

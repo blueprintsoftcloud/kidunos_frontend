@@ -54,6 +54,9 @@ const emptyForm = {
   permissions: [] as StaffPermission[],
 };
 
+const isSupportedMobile = (phone: string) =>
+  /^5[0-9]{8}$/.test(phone) || /^[6-9][0-9]{9}$/.test(phone);
+
 // ── Permission Checkbox Group ──────────────────────────────────────────────
 function PermissionSelector({
   selected,
@@ -273,8 +276,8 @@ export default function StaffManagement() {
       });
       return;
     }
-    if (!/^[6-9][0-9]{9}$/.test(phone)) {
-      toast.error("Phone must be a valid 10-digit Indian mobile number.", {
+    if (!isSupportedMobile(phone)) {
+      toast.error("Enter a valid 9-digit UAE or legacy 10-digit Indian mobile number.", {
         id: "staff-validate",
       });
       return;
@@ -373,8 +376,8 @@ export default function StaffManagement() {
       });
       return;
     }
-    if (!/^[6-9][0-9]{9}$/.test(phone)) {
-      toast.error("Phone must be a valid 10-digit Indian mobile number.", {
+    if (!isSupportedMobile(phone)) {
+      toast.error("Enter a valid 9-digit UAE or legacy 10-digit Indian mobile number.", {
         id: "staff-edit-validate",
       });
       return;
@@ -697,7 +700,7 @@ export default function StaffManagement() {
                       type="tel"
                       inputMode="numeric"
                       maxLength={10}
-                      placeholder="10-digit mobile number"
+                      placeholder="UAE 9-digit or Indian 10-digit mobile"
                       className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50/70 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 focus:bg-white transition-all"
                       value={createForm.phone}
                       onChange={(e) => {
@@ -883,7 +886,7 @@ export default function StaffManagement() {
                       type="tel"
                       inputMode="numeric"
                       maxLength={10}
-                      placeholder="10-digit mobile number"
+                      placeholder="UAE 9-digit or Indian 10-digit mobile"
                       className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50/70 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 focus:bg-white transition-all"
                       value={editBasicForm.phone}
                       onChange={(e) => {

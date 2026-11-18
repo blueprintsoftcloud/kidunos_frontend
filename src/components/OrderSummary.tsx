@@ -75,7 +75,7 @@ const OrderSummary = ({
                 </p>
               )}
             </div>
-            <span>₹{item.price * item.quantity}</span>
+            <span>AED {item.price * item.quantity}</span>
           </li>
         ))}
       </ul>
@@ -107,15 +107,15 @@ const OrderSummary = ({
       <div className="border-t mt-4 pt-4 space-y-2 text-sm">
         <div className="flex justify-between">
           <span>Subtotal</span>
-          <span>₹{cartTotal}</span>
+          <span>AED {cartTotal}</span>
         </div>
         <div className="flex justify-between">
           <span>Shipping</span>
-          <span>₹{shippingCharge}</span>
+          <span>AED {shippingCharge}</span>
         </div>
         <div className="flex justify-between font-semibold text-base">
           <span>Total</span>
-          <span>₹{cartTotal + shippingCharge}</span>
+          <span>AED {cartTotal + shippingCharge}</span>
         </div>
       </div>
 

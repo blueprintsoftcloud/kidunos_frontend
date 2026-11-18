@@ -38,7 +38,7 @@ export const ShareProductModal: React.FC<ShareProductModalProps> = ({
       : "");
 
   const shareText = `Check out ${product.name}${
-    product.price ? ` (₹${product.price.toLocaleString("en-IN")})` : ""
+    product.price ? ` (AED ${product.price.toLocaleString("en-AE")})` : ""
   } on our store!`;
 
   const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
@@ -141,7 +141,7 @@ export const ShareProductModal: React.FC<ShareProductModalProps> = ({
                   )}
                   {product.price !== undefined && (
                     <p className="text-sm font-bold text-neutral-900 mt-1">
-                      ₹{product.price.toLocaleString("en-IN")}
+                      AED {product.price.toLocaleString("en-AE")}
                     </p>
                   )}
                 </div>
