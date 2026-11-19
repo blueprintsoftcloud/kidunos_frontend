@@ -1,6 +1,6 @@
 // src/components/CustomerAuthModal.tsx
 // Modal for customer auth with two modes:
-//   Sign In:  phone → OTP → login  (404 = offer to create account)
+//   Sign In:  email or phone → OTP → login  (unknown email = offer to create account)
 //   Register: name + email + phone → OTP → register → auto-login
 
 import { useState, useEffect, useCallback, useRef } from "react";
@@ -427,6 +427,29 @@ export default function CustomerAuthModal({ open, onClose }: Props) {
           toast.error("Email sign-in is disabled. Switched to mobile sign-in.", {
             id: "otp-feature-disabled",
           });
+          return;
+        }
+        if (code === "CUSTOMER_NOT_FOUND" && mode === "sign-in") {
+          setMode("register");
+          setStep("form");
+          setName("");
+          setPhone("");
+          setNameError("");
+          setPhoneError("");
+          setEmailError("");
+          setOtp("");
+          setEmailChallengeId("");
+          setChallengeDead(false);
+          setTimer(0);
+          setVerifyError("");
+          toast("No customer account found. Please create an account.", {
+            icon: "ℹ️",
+            id: "customer-signup-required",
+          });
+          return;
+        }
+        if (code === "ROLE_RESTRICTED") {
+          setAdminBlocked(true);
           return;
         }
         const fieldErrors = e?.response?.data?.errors;

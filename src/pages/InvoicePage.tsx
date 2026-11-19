@@ -127,7 +127,9 @@ export default function InvoicePage() {
       .then((res) => setOrder(res.data.order))
       .catch((err) => {
         const status = err?.response?.status;
-        if (status === 403) setError("You are not authorised to view this invoice.");
+        const msg = err?.response?.data?.message;
+        if (msg) setError(msg);
+        else if (status === 403) setError("You are not authorised to view this invoice.");
         else if (status === 404) setError("Order not found.");
         else setError("Failed to load invoice. Please try again.");
       })
@@ -142,6 +144,9 @@ export default function InvoicePage() {
 
   const handlePrint = () => window.print();
 
+  const isPrivileged = ["ADMIN", "SUPER_ADMIN", "STAFF"].includes(user?.role ?? "");
+  const isCancelledForCustomer = !isPrivileged && order?.orderStatus?.toUpperCase() === "CANCELLED";
+
   /* ── Skeleton / Error states ── */
   if (loading) {
     return (
@@ -154,13 +159,19 @@ export default function InvoicePage() {
     );
   }
 
-  if (error || !order) {
+  if (error || !order || isCancelledForCustomer) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
         <div className="max-w-md text-center p-8 bg-white rounded-2xl border border-gray-200 shadow">
           <XCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-          <h2 className="text-lg font-bold text-gray-900 mb-2">Error</h2>
-          <p className="text-gray-500 mb-6">{error ?? "Order not found."}</p>
+          <h2 className="text-lg font-bold text-gray-900 mb-2">
+            {isCancelledForCustomer ? "Invoice Unavailable" : "Error"}
+          </h2>
+          <p className="text-gray-500 mb-6">
+            {isCancelledForCustomer
+              ? "Invoices are not available for cancelled orders."
+              : error ?? "Order not found."}
+          </p>
           <button
             onClick={() => navigate(-1)}
             className="px-6 py-2 bg-black text-white rounded-full text-sm font-bold uppercase tracking-wider hover:bg-gray-900 transition"

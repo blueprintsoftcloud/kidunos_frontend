@@ -303,23 +303,25 @@ export default function MyOrdersPage() {
 
                   <div className="flex items-center gap-2 self-start sm:self-center">
                     <StatusBadge rawStatus={order.orderStatus} />
-                    <button
-                      onClick={() => navigate(`/invoice/${order.id}`)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold uppercase tracking-wider transition-all shadow-sm bg-white"
-                      style={{ borderColor: "var(--theme-primary)", color: "var(--theme-primary)" }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = "var(--theme-primary)";
-                        e.currentTarget.style.color = "var(--theme-primary-ink)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = "white";
-                        e.currentTarget.style.color = "var(--theme-primary)";
-                      }}
-                      title="View Invoice"
-                    >
-                      <FileText className="w-3.5 h-3.5" />
-                      Invoice
-                    </button>
+                    {order.orderStatus?.toUpperCase() !== "CANCELLED" && (
+                      <button
+                        onClick={() => navigate(`/invoice/${order.id}`)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold uppercase tracking-wider transition-all shadow-sm bg-white"
+                        style={{ borderColor: "var(--theme-primary)", color: "var(--theme-primary)" }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = "var(--theme-primary)";
+                          e.currentTarget.style.color = "var(--theme-primary-ink)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = "white";
+                          e.currentTarget.style.color = "var(--theme-primary)";
+                        }}
+                        title="View Invoice"
+                      >
+                        <FileText className="w-3.5 h-3.5" />
+                        Invoice
+                      </button>
+                    )}
                   </div>
                 </div>
 

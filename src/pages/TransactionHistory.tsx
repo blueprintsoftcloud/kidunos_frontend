@@ -277,16 +277,18 @@ const TransactionDetails = ({
       )}
     </div>
 
-    <div className="flex justify-end pt-1">
-      <button
-        onClick={onViewInvoice}
-        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm transition-all text-center hover:brightness-110 active:scale-95 cursor-pointer"
-        style={{ background: "var(--theme-primary)", color: "var(--theme-primary-ink)" }}
-      >
-        <Receipt className="w-3.5 h-3.5" />
-        View Invoice
-      </button>
-    </div>
+    {tx.orderStatus?.toUpperCase() !== "CANCELLED" && (
+      <div className="flex justify-end pt-1">
+        <button
+          onClick={onViewInvoice}
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm transition-all text-center hover:brightness-110 active:scale-95 cursor-pointer"
+          style={{ background: "var(--theme-primary)", color: "var(--theme-primary-ink)" }}
+        >
+          <Receipt className="w-3.5 h-3.5" />
+          View Invoice
+        </button>
+      </div>
+    )}
   </div>
 );
 
