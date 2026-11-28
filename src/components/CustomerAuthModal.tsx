@@ -278,7 +278,7 @@ export default function CustomerAuthModal({ open, onClose }: Props) {
   const handleEmailChange = (raw: string) => {
     const cleaned = raw.toLowerCase();
     setEmail(cleaned);
-    if (emailError && isValidEmailAddress(cleaned)) {
+    if (emailError) {
       setEmailError("");
     }
   };
@@ -304,13 +304,8 @@ export default function CustomerAuthModal({ open, onClose }: Props) {
   const handlePhoneChange = (raw: string) => {
     const digits = raw.replace(/\D/g, "").slice(0, 9);
     setPhone(digits);
-    // Clear error live once user has a valid 10-digit number
     if (phoneError) {
-      if (digits.length === 9 && /^5[0-9]{8}$/.test(digits)) {
-        setPhoneError("");
-      } else if (digits.length < 10) {
-        setPhoneError("");
-      }
+      setPhoneError("");
     }
   };
 
@@ -450,6 +445,38 @@ export default function CustomerAuthModal({ open, onClose }: Props) {
         }
         if (code === "ROLE_RESTRICTED") {
           setAdminBlocked(true);
+          return;
+        }
+        if (code === "EMAIL_ALREADY_EXISTS") {
+          const msg =
+            e?.response?.data?.message ||
+            "An account with this email address already exists. Please sign in instead.";
+          setEmailError(msg);
+          toast.error(msg, { id: "signup-email-exists" });
+          return;
+        }
+        if (code === "PHONE_ALREADY_EXISTS") {
+          const msg =
+            e?.response?.data?.message ||
+            "An account with this mobile number already exists. Please sign in instead.";
+          setPhoneError(msg);
+          toast.error(msg, { id: "signup-phone-exists" });
+          return;
+        }
+        if (code === "EMAIL_AND_PHONE_ALREADY_EXISTS") {
+          const msg =
+            e?.response?.data?.message ||
+            "An account with this email and mobile number already exists. Please sign in instead.";
+          setEmailError("This email is already registered.");
+          setPhoneError("This mobile number is already registered.");
+          toast.error(msg, { id: "signup-account-exists" });
+          return;
+        }
+        if (code === "SIGNUP_CONFLICT") {
+          const msg =
+            e?.response?.data?.message ||
+            "An account with these details already exists. Please sign in instead.";
+          toast.error(msg, { id: "signup-conflict" });
           return;
         }
         const fieldErrors = e?.response?.data?.errors;

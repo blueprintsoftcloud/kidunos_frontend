@@ -1410,7 +1410,7 @@ const AdminProfile = () => {
                           </div>
                           <div className="space-y-1.5">
                             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Business Phone</label>
-                            <input type="text" value={seo.SEO_ORG_PHONE} onChange={(e) => setSeo((p) => ({ ...p, SEO_ORG_PHONE: e.target.value }))} placeholder="+91 98765 43210" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all text-sm outline-none" />
+                            <input type="text" value={seo.SEO_ORG_PHONE} onChange={(e) => setSeo((p) => ({ ...p, SEO_ORG_PHONE: e.target.value }))} placeholder="+971 50 123 4567" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all text-sm outline-none" />
                           </div>
                           <div className="space-y-1.5">
                             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Business Email</label>

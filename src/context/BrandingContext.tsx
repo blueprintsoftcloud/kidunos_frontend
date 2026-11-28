@@ -28,7 +28,7 @@ const DEFAULT_BRANDING: BrandingData = {
   companyName: "Storra",
   companyTagline: "",
   companyLogo: "",
-  companyFavicon: "/vite.svg",
+  companyFavicon: "/favicon.png",
   showCompanyName: true,
   showCompanyTagline: true,
 };
@@ -41,7 +41,7 @@ function readBrandingCache(): BrandingData | null {
     return {
       ...parsed,
       companyName: parsed.companyName?.trim() || "Storra",
-      companyFavicon: parsed.companyFavicon?.trim() || "/vite.svg",
+      companyFavicon: parsed.companyFavicon?.trim() || "/favicon.png",
     };
   } catch {
     return null;

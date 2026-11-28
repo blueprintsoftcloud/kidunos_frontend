@@ -26,6 +26,25 @@ interface AddAdminModalProps {
   onSuccess: () => void;
 }
 
+const isValidMobile = (val: string): boolean => {
+  const cleaned = val.replace(/[\s\-()+]/g, "");
+  return (
+    /^5[0-9]{8}$/.test(cleaned) ||
+    /^05[0-9]{8}$/.test(cleaned) ||
+    /^9715[0-9]{8}$/.test(cleaned) ||
+    /^009715[0-9]{8}$/.test(cleaned) ||
+    /^[6-9][0-9]{9}$/.test(cleaned)
+  );
+};
+
+const normalizeMobile = (val: string): string => {
+  const cleaned = val.replace(/[\s\-()+]/g, "");
+  if (/^0(5[0-9]{8})$/.test(cleaned)) return cleaned.slice(1);
+  if (/^971(5[0-9]{8})$/.test(cleaned)) return cleaned.slice(3);
+  if (/^00971(5[0-9]{8})$/.test(cleaned)) return cleaned.slice(5);
+  return cleaned;
+};
+
 const EMPTY_FORM = {
   username: "",
   email: "",
@@ -88,11 +107,10 @@ export default function AddAdminModal({ isOpen, onClose, onSuccess }: AddAdminMo
       tempErrors.email = "Enter a valid email address.";
     }
 
-    const phoneRegex = /^[0-9]{10}$/;
     if (!phone.trim()) {
       tempErrors.phone = "Phone number is required.";
-    } else if (!phoneRegex.test(phone.trim())) {
-      tempErrors.phone = "Enter a valid 10-digit phone number.";
+    } else if (!isValidMobile(phone.trim())) {
+      tempErrors.phone = "Enter a valid UAE mobile number (e.g. 50 123 4567 or 050 123 4567).";
     }
 
     if (!password.trim()) {
@@ -117,7 +135,8 @@ export default function AddAdminModal({ isOpen, onClose, onSuccess }: AddAdminMo
 
     try {
       setLoading(true);
-      await api.post("/admin/users", formData, {
+      const normalizedPhone = normalizeMobile(formData.phone);
+      await api.post("/admin/users", { ...formData, phone: normalizedPhone }, {
         headers: { "Content-Type": "application/json" },
       });
 
@@ -224,12 +243,12 @@ export default function AddAdminModal({ isOpen, onClose, onSuccess }: AddAdminMo
                 <PhoneIcon className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   name="phone"
-                  placeholder="Mobile number"
-                  inputMode="numeric"
-                  maxLength={10}
+                  placeholder="e.g. 50 123 4567 or 050 123 4567"
+                  inputMode="tel"
+                  maxLength={16}
                   value={formData.phone}
                   onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                    const value = e.target.value.replace(/[^\d+\s-]/g, "").slice(0, 16);
                     setFormData((prev) => ({ ...prev, phone: value }));
                     if (errors.phone) setErrors((prev) => ({ ...prev, phone: "" }));
                   }}

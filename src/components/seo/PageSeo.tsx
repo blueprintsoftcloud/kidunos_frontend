@@ -45,7 +45,7 @@ export default function PageSeo({ title, description, image, path, noIndex }: Pa
   const resolvedImage = image || seo.defaultOgImage || undefined;
   const canonicalPath = path ?? (typeof window !== "undefined" ? window.location.pathname : "/");
   const canonicalUrl = typeof window !== "undefined" ? `${window.location.origin}${canonicalPath}` : undefined;
-  const faviconHref = branding.companyFavicon?.trim() || "/vite.svg";
+  const faviconHref = branding.companyFavicon?.trim() || "/favicon.png";
 
   return (
     <Helmet>
